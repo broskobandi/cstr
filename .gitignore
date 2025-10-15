@@ -1,0 +1,5 @@
+build
+*swp
+doc
+compile_commands.json
+tags
