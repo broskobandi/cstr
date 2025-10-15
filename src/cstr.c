@@ -34,19 +34,20 @@ SOFTWARE.
 
 _Thread_local static const char *g_err;
 
+CVEC_TYPEDEF(char);
+
 /** Creates a new string.
  * \param src A string to initialize with (can be NULL).
  * \return A pointer to the new string. */
 cstr_t *cstr_new(const char *src) {
-	cvec_t *vec = cvec_new(sizeof(char));
+	vchar_t *vec = vchar_new();
 	if (!vec) {
 		g_err = "Failed to create string.";
 		return NULL;
 	}
 	if (src)
-		cvec_append(vec, (void*)src, strlen(src), sizeof(char));
-	char c = '\0';
-	cvec_push_back(vec, &c, sizeof(char));
+		vchar_append(vec, (void*)src, strlen(src));
+	vchar_push_back(vec, '\0');
 	return (cstr_t*)vec;
 }
 
@@ -57,8 +58,8 @@ void cstr_del(cstr_t *str) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	cvec_t *vec = (cvec_t*)str;
-	cvec_del(vec);
+	vchar_t *vec = (vchar_t*)str;
+	vchar_del(vec);
 }
 
 /** Returns the length of a string (\0 excluded).
@@ -69,8 +70,8 @@ size_t cstr_len(const cstr_t *str) {
 		g_err = "Invalid argument.";
 		return (size_t)-1;
 	}
-	cvec_t *vec = (cvec_t*)str;
-	return cvec_len(vec) - 1;
+	vchar_t *vec = (vchar_t*)str;
+	return vchar_len(vec) - 1;
 }
 
 /** Returns a const pointer to the raw string data.
@@ -81,8 +82,8 @@ const char *cstr_view(const cstr_t *str) {
 		g_err = "Invalid argument.";
 		return NULL;
 	}
-	cvec_t *vec = (cvec_t*)str;
-	return (const char *)cvec_view(vec, 0);
+	vchar_t *vec = (vchar_t*)str;
+	return (const char *)vchar_view(vec, 0);
 }
 
 /** Returns a pointer to a character in a string.
@@ -94,12 +95,12 @@ const char *cstr_at(const cstr_t *str, size_t index) {
 		g_err = "Invalid argument.";
 		return NULL;
 	}
-	cvec_t *vec = (cvec_t*)str;
-	if (index >= cvec_len(vec) - 1) {
+	vchar_t *vec = (vchar_t*)str;
+	if (index >= vchar_len(vec) - 1) {
 		g_err = "Index is out of bounds.";
 		return NULL;
 	}
-	return (const char *)cvec_view(vec, index);
+	return (const char *)vchar_view(vec, index);
 }
 
 /** Appends a character at the end of the string.
@@ -110,8 +111,8 @@ void cstr_push_back(cstr_t *str, char c) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	cvec_t *vec = (cvec_t*)str;
-	cvec_insert(vec, cvec_len(vec) - 1, &c, sizeof(char));
+	vchar_t *vec = (vchar_t*)str;
+	vchar_insert(vec, c, vchar_len(vec) - 1);
 }
 
 /** Prepends a character at the beginning of the string.
@@ -122,8 +123,8 @@ void cstr_push_front(cstr_t *str, char c) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	cvec_t *vec = (cvec_t*)str;
-	cvec_push_front(vec, &c, sizeof(char));
+	vchar_t *vec = (vchar_t*)str;
+	vchar_push_front(vec, c);
 }
 
 /** Removes the last character of a string.
@@ -133,12 +134,12 @@ void cstr_pop_back(cstr_t *str) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	cvec_t *vec = (cvec_t*)str;
-	if (cvec_len(vec) <= 1) {
+	vchar_t *vec = (vchar_t*)str;
+	if (vchar_len(vec) <= 1) {
 		g_err = "Cannot pop empty string.";
 		return;
 	}
-	cvec_remove(vec, cvec_len(vec) - 2);
+	vchar_remove(vec, vchar_len(vec) - 2);
 }
 
 /** Removes the first character of a string.
@@ -148,12 +149,12 @@ void cstr_pop_front(cstr_t *str) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	cvec_t *vec = (cvec_t*)str;
-	if (cvec_len(vec) <= 1) {
+	vchar_t *vec = (vchar_t*)str;
+	if (vchar_len(vec) <= 1) {
 		g_err = "Cannot pop empty string.";
 		return;
 	}
-	cvec_pop_front(vec);
+	vchar_pop_front(vec);
 }
 
 /** Appends a new string at the end of a string.
@@ -164,14 +165,13 @@ void cstr_append(cstr_t *str, const char *src) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	cvec_t *vec = (cvec_t*)str;
-	cvec_replace_range(
+	vchar_t *vec = (vchar_t*)str;
+	vchar_replace_range(
 		vec,
-		cvec_len(vec) - 1,
+		vchar_len(vec) - 1,
 		(void*)src,
 		strlen(src),
-		0,
-		sizeof(char));
+		0);
 }
 
 /** Prepends a new string at the beginning of a string.
@@ -182,8 +182,8 @@ void cstr_prepend(cstr_t *str, const char *src) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	cvec_t *vec = (cvec_t*)str;
-	cvec_prepend(vec, (void*)src, strlen(src), sizeof(char));
+	vchar_t *vec = (vchar_t*)str;
+	vchar_prepend(vec, (void*)src, strlen(src));
 }
 
 /** Removes a character from the string.
@@ -194,16 +194,16 @@ void cstr_remove(cstr_t *str, size_t index) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	cvec_t *vec = (cvec_t*)str;
-	if (cvec_len(vec) <= 1) {
+	vchar_t *vec = (vchar_t*)str;
+	if (vchar_len(vec) <= 1) {
 		g_err = "Cannot remove from empty string.";
 		return;
 	}
-	if (index >= cvec_len(vec) - 1) {
+	if (index >= vchar_len(vec) - 1) {
 		g_err = "Index is out of bounds.";
 		return;
 	}
-	cvec_remove(vec, index);
+	vchar_remove(vec, index);
 }
 
 /** Inserts a character into the string.
@@ -215,12 +215,12 @@ void cstr_insert(cstr_t *str, size_t index, char c) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	cvec_t *vec = (cvec_t*)str;
-	if (index >= cvec_len(vec) - 1) {
+	vchar_t *vec = (vchar_t*)str;
+	if (index >= vchar_len(vec) - 1) {
 		g_err = "Index is out of bounds.";
 		return;
 	}
-	cvec_insert(vec, index, &c, sizeof(char));
+	vchar_insert(vec, c, index);
 }
 
 /** Compares two strings.
@@ -233,8 +233,8 @@ int cstr_same(const cstr_t *str, const char *src) {
 		g_err = "Invalid argument.";
 		return -1;
 	}
-	cvec_t *vec = (cvec_t*)str;
-	if (!memcmp(cvec_view(vec, 0), src, cvec_len(vec) * sizeof(char))) {
+	vchar_t *vec = (vchar_t*)str;
+	if (!memcmp(vchar_view(vec, 0), src, vchar_len(vec) * sizeof(char))) {
 		return 1;
 	} else {
 		return 0;
@@ -251,8 +251,8 @@ int cstr_has(const cstr_t *str, const char *keyword) {
 		g_err = "Invalid argument.";
 		return -1;
 	}
-	cvec_t *vec = (cvec_t*)str;
-	if (strstr(cvec_view(vec, 0), keyword)) {
+	vchar_t *vec = (vchar_t*)str;
+	if (strstr(vchar_view(vec, 0), keyword)) {
 		return 1;
 	} else {
 		return 0;
@@ -269,11 +269,11 @@ size_t cstr_find(const cstr_t *str, const char *keyword) {
 		g_err = "Invalid argument.";
 		return (size_t)-1;
 	}
-	cvec_t *vec = (cvec_t*)str;
-	void *ptr = strstr(cvec_view(vec, 0), keyword);
+	vchar_t *vec = (vchar_t*)str;
+	void *ptr = strstr(vchar_view(vec, 0), keyword);
 	if (!ptr) return (size_t)-1;
 	uintptr_t index = (uintptr_t)ptr;
-	return index - (uintptr_t)cvec_view(vec, 0);
+	return index - (uintptr_t)vchar_view(vec, 0);
 }
 
 /** Replaces all occurrences of 'keyword' with 'src'.
@@ -285,16 +285,14 @@ void cstr_replace(cstr_t *str, const char *keyword, const char *src) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	cvec_t *vec = (cvec_t*)str;
+	vchar_t *vec = (vchar_t*)str;
 	while (cstr_has(str, keyword)) {
-		cvec_replace_range(
+		vchar_replace_range(
 			vec,
 			cstr_find(str, keyword),
 			(void*)src,
 			strlen(src),
-			strlen(keyword),
-			sizeof(char)
-		);
+			strlen(keyword));
 	}
 }
 
