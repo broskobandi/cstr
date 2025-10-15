@@ -1,7 +1,7 @@
 #include <ctest.h>
-#include <cerror.h>
 #include <string.h>
 #include "cstr.h"
+#include <stdio.h>
 
 void test_str_basic_functions() {
 	str_t *str = str_new(NULL);
@@ -12,7 +12,7 @@ void test_str_basic_functions() {
 	CTEST(!str_has(str, "Hello"));
 	CTEST(str_find(str, "Hello") == (size_t)-1);
 	str_del(str);
-	CTEST(!cerror_state());
+	CTEST(!str_get_error());
 	
 
 	str_t *str2 = str_new("Hello, World!");
@@ -23,7 +23,7 @@ void test_str_basic_functions() {
 	CTEST(str_has(str2, "Hello"));
 	CTEST(str_find(str2, "World") == 7);
 	str_del(str2);
-	CTEST(!cerror_state());
+	CTEST(!str_get_error());
 }
 
 void test_str_push_pop() {
@@ -52,7 +52,7 @@ void test_str_push_pop() {
 	}
 	
 	str_del(str);
-	CTEST(!cerror_state());
+	CTEST(!str_get_error());
 }
 
 void test_str_append_prepend() {
@@ -78,10 +78,10 @@ void test_str_append_prepend() {
 	str_replace(str, "Jello", "Hello");
 	CTEST(str_has(str, "Hello"));
 	CTEST(str_same(str, "Hello, World!"));
-	cerror_print();
+	fprintf(stderr, "%s\n", str_get_error());
 
 	str_del(str);
-	CTEST(!cerror_state());
+	CTEST(!str_get_error());
 }
 
 void test_str_replace_expand() {
@@ -90,7 +90,7 @@ void test_str_replace_expand() {
 	CTEST(str_same(str, "Some super duper long and absolutely awesome text."));
 
 	str_del(str);
-	CTEST(!cerror_state());
+	CTEST(!str_get_error());
 }
 
 void test_str_replace_shrink() {
@@ -99,7 +99,7 @@ void test_str_replace_shrink() {
 	CTEST(str_same(str, "Some short text."));
 
 	str_del(str);
-	CTEST(!cerror_state());
+	CTEST(!str_get_error());
 }
 
 int main(void) {

@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <cerror.h>
 
 /* Include the library. */
 #include <cstr.h>

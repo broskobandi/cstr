@@ -2,7 +2,7 @@
 PROJECT := cstr
 CC := gcc
 CFLAGS = -Wall -Wextra -Werror -Wunused-result -Wconversion
-LDFLAGS = -L/usr/local/lib -lcvec -lcerror
+LDFLAGS = -L/usr/local/lib -lcvec -lcarena
 CPPFLAGS = -Iinclude
 
 # Dirs
@@ -39,11 +39,9 @@ debug: $(LIB_A) $(LIB_SO)
 test: LDFLAGS += -lctest
 test: CPPFLAGS += -DTEST
 test: $(TEST_EXE)
-	./$<
 
-example: LDFLAGS += -lcstr -lcerror
+example: LDFLAGS += -lcstr
 example: $(EXAMPLE_EXE)
-	./$<
 
 tags:
 	ctags -R --c-kinds=+p+d /usr/local/include /usr/include .
