@@ -2,6 +2,27 @@
 ## Dynamic string written in C.
 The goal of the project is to provide fast and reliable abstractions for
 handling dynamic strings in C.
+## Prerequisites
+- cmake (for building the library)
+- [cvec](https://github.com/broskobandi/cvec.git)
+- [carena](https://github.com/broskobandi/carena.git)
+- [ctest](https://github.com/broskobandi/ctest.git) (for running the tests)
+## Installation
+```bash
+git clone https://github.com/broskobandi/cstr.git &&
+cd cstr &&
+mkdir build &&
+cd build &&
+cmake .. &&
+make &&
+sudo make install
+```
+## Testing
+```bash
+cd cstr/build &&
+make test &&
+./test
+```
 ## Usage
 ```c
 #include <stdio.h>
