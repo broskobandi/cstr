@@ -37,137 +37,137 @@ _Thread_local static const char *g_err;
 /** Creates a new string.
  * \param src A string to initialize with (can be NULL).
  * \return A pointer to the new string. */
-str_t *str_new(const char *src) {
-	vec_t *vec = vec_new(sizeof(char));
+cstr_t *cstr_new(const char *src) {
+	cvec_t *vec = cvec_new(sizeof(char));
 	if (!vec) {
 		g_err = "Failed to create string.";
 		return NULL;
 	}
 	if (src)
-		vec_append(vec, (void*)src, strlen(src), sizeof(char));
+		cvec_append(vec, (void*)src, strlen(src), sizeof(char));
 	char c = '\0';
-	vec_push_back(vec, &c, sizeof(char));
-	return (str_t*)vec;
+	cvec_push_back(vec, &c, sizeof(char));
+	return (cstr_t*)vec;
 }
 
 /** Deletes a string.
  * \param str A pointer to the string object to be deleted. */
-void str_del(str_t *str) {
+void cstr_del(cstr_t *str) {
 	if (!str) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vec_t *vec = (vec_t*)str;
-	vec_del(vec);
+	cvec_t *vec = (cvec_t*)str;
+	cvec_del(vec);
 }
 
 /** Returns the length of a string (\0 excluded).
  * \param str A pointer to the string to be accessed.
  * \return The length of the string or (size_t)-1 on failure. */
-size_t str_len(const str_t *str) {
+size_t cstr_len(const cstr_t *str) {
 	if (!str) {
 		g_err = "Invalid argument.";
 		return (size_t)-1;
 	}
-	vec_t *vec = (vec_t*)str;
-	return vec_len(vec) - 1;
+	cvec_t *vec = (cvec_t*)str;
+	return cvec_len(vec) - 1;
 }
 
 /** Returns a const pointer to the raw string data.
  * \param str A pointer to the string to be accessed.
  * \return A const pointer to internal string or NULL on failure. */
-const char *str_view(const str_t *str) {
+const char *cstr_view(const cstr_t *str) {
 	if (!str) {
 		g_err = "Invalid argument.";
 		return NULL;
 	}
-	vec_t *vec = (vec_t*)str;
-	return (const char *)vec_view(vec, 0);
+	cvec_t *vec = (cvec_t*)str;
+	return (const char *)cvec_view(vec, 0);
 }
 
 /** Returns a pointer to a character in a string.
  * \param str The string to be accessed,
  * \param index The index of the character to be returned.
  * \return A const pointer to the character found at 'index' or NULL. */
-const char *str_at(const str_t *str, size_t index) {
+const char *cstr_at(const cstr_t *str, size_t index) {
 	if (!str) {
 		g_err = "Invalid argument.";
 		return NULL;
 	}
-	vec_t *vec = (vec_t*)str;
-	if (index >= vec_len(vec) - 1) {
+	cvec_t *vec = (cvec_t*)str;
+	if (index >= cvec_len(vec) - 1) {
 		g_err = "Index is out of bounds.";
 		return NULL;
 	}
-	return (const char *)vec_view(vec, index);
+	return (const char *)cvec_view(vec, index);
 }
 
 /** Appends a character at the end of the string.
  * \param str A pointer to the string to be modified.
  * \param c The character to be added. */
-void str_push_back(str_t *str, char c) {
+void cstr_push_back(cstr_t *str, char c) {
 	if (!str) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vec_t *vec = (vec_t*)str;
-	vec_insert(vec, vec_len(vec) - 1, &c, sizeof(char));
+	cvec_t *vec = (cvec_t*)str;
+	cvec_insert(vec, cvec_len(vec) - 1, &c, sizeof(char));
 }
 
 /** Prepends a character at the beginning of the string.
  * \param str A pointer to the string to be modified.
  * \param c The character to be added. */
-void str_push_front(str_t *str, char c) {
+void cstr_push_front(cstr_t *str, char c) {
 	if (!str) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vec_t *vec = (vec_t*)str;
-	vec_push_front(vec, &c, sizeof(char));
+	cvec_t *vec = (cvec_t*)str;
+	cvec_push_front(vec, &c, sizeof(char));
 }
 
 /** Removes the last character of a string.
  * \param str A pointer to the string to be modified. */
-void str_pop_back(str_t *str) {
+void cstr_pop_back(cstr_t *str) {
 	if (!str) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vec_t *vec = (vec_t*)str;
-	if (vec_len(vec) <= 1) {
+	cvec_t *vec = (cvec_t*)str;
+	if (cvec_len(vec) <= 1) {
 		g_err = "Cannot pop empty string.";
 		return;
 	}
-	vec_remove(vec, vec_len(vec) - 2);
+	cvec_remove(vec, cvec_len(vec) - 2);
 }
 
 /** Removes the first character of a string.
  * \param str A pointer to the string to be modified. */
-void str_pop_front(str_t *str) {
+void cstr_pop_front(cstr_t *str) {
 	if (!str) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vec_t *vec = (vec_t*)str;
-	if (vec_len(vec) <= 1) {
+	cvec_t *vec = (cvec_t*)str;
+	if (cvec_len(vec) <= 1) {
 		g_err = "Cannot pop empty string.";
 		return;
 	}
-	vec_pop_front(vec);
+	cvec_pop_front(vec);
 }
 
 /** Appends a new string at the end of a string.
  * \param A pointer to the string to be modified.
  * \param src The string to be appended. */
-void str_append(str_t *str, const char *src) {
+void cstr_append(cstr_t *str, const char *src) {
 	if (!str || !src) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vec_t *vec = (vec_t*)str;
-	vec_replace_range(
+	cvec_t *vec = (cvec_t*)str;
+	cvec_replace_range(
 		vec,
-		vec_len(vec) - 1,
+		cvec_len(vec) - 1,
 		(void*)src,
 		strlen(src),
 		0,
@@ -177,50 +177,50 @@ void str_append(str_t *str, const char *src) {
 /** Prepends a new string at the beginning of a string.
  * \param A pointer to the string to be modified.
  * \param src The string to be appended. */
-void str_prepend(str_t *str, const char *src) {
+void cstr_prepend(cstr_t *str, const char *src) {
 	if (!str || !src) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vec_t *vec = (vec_t*)str;
-	vec_prepend(vec, (void*)src, strlen(src), sizeof(char));
+	cvec_t *vec = (cvec_t*)str;
+	cvec_prepend(vec, (void*)src, strlen(src), sizeof(char));
 }
 
 /** Removes a character from the string.
  * \param A pointer to the string to be modified.
  * \param index The index of the character to be removed. */
-void str_remove(str_t *str, size_t index) {
+void cstr_remove(cstr_t *str, size_t index) {
 	if (!str) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vec_t *vec = (vec_t*)str;
-	if (vec_len(vec) <= 1) {
+	cvec_t *vec = (cvec_t*)str;
+	if (cvec_len(vec) <= 1) {
 		g_err = "Cannot remove from empty string.";
 		return;
 	}
-	if (index >= vec_len(vec) - 1) {
+	if (index >= cvec_len(vec) - 1) {
 		g_err = "Index is out of bounds.";
 		return;
 	}
-	vec_remove(vec, index);
+	cvec_remove(vec, index);
 }
 
 /** Inserts a character into the string.
  * \param A pointer to the string to be modified.
  * \param index The index where the character is to be inserted.
  * \param c The character to be inserted. */
-void str_insert(str_t *str, size_t index, char c) {
+void cstr_insert(cstr_t *str, size_t index, char c) {
 	if (!str) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vec_t *vec = (vec_t*)str;
-	if (index >= vec_len(vec) - 1) {
+	cvec_t *vec = (cvec_t*)str;
+	if (index >= cvec_len(vec) - 1) {
 		g_err = "Index is out of bounds.";
 		return;
 	}
-	vec_insert(vec, index, &c, sizeof(char));
+	cvec_insert(vec, index, &c, sizeof(char));
 }
 
 /** Compares two strings.
@@ -228,13 +228,13 @@ void str_insert(str_t *str, size_t index, char c) {
  * \param src The string 'str' is to be compared with.
  * \return 1 if they are the same, 0 if they are different,
  * -1 on failure. */
-int str_same(const str_t *str, const char *src) {
+int cstr_same(const cstr_t *str, const char *src) {
 	if (!str || !src) {
 		g_err = "Invalid argument.";
 		return -1;
 	}
-	vec_t *vec = (vec_t*)str;
-	if (!memcmp(vec_view(vec, 0), src, vec_len(vec) * sizeof(char))) {
+	cvec_t *vec = (cvec_t*)str;
+	if (!memcmp(cvec_view(vec, 0), src, cvec_len(vec) * sizeof(char))) {
 		return 1;
 	} else {
 		return 0;
@@ -246,13 +246,13 @@ int str_same(const str_t *str, const char *src) {
  * \param keyword The string to find in 'str'.
  * \return 1 if they 'keyword' can be found, 0 if it cannot,
  * -1 on failure. */
-int str_has(const str_t *str, const char *keyword) {
+int cstr_has(const cstr_t *str, const char *keyword) {
 	if (!str || !keyword) {
 		g_err = "Invalid argument.";
 		return -1;
 	}
-	vec_t *vec = (vec_t*)str;
-	if (strstr(vec_view(vec, 0), keyword)) {
+	cvec_t *vec = (cvec_t*)str;
+	if (strstr(cvec_view(vec, 0), keyword)) {
 		return 1;
 	} else {
 		return 0;
@@ -264,32 +264,32 @@ int str_has(const str_t *str, const char *keyword) {
  * \param keyword The string to find in 'str'.
  * \return The index of the first occurrence of 'keyword' or 
  * (size_t)-1 on failure. */
-size_t str_find(const str_t *str, const char *keyword) {
+size_t cstr_find(const cstr_t *str, const char *keyword) {
 	if (!str || !keyword) {
 		g_err = "Invalid argument.";
 		return (size_t)-1;
 	}
-	vec_t *vec = (vec_t*)str;
-	void *ptr = strstr(vec_view(vec, 0), keyword);
+	cvec_t *vec = (cvec_t*)str;
+	void *ptr = strstr(cvec_view(vec, 0), keyword);
 	if (!ptr) return (size_t)-1;
 	uintptr_t index = (uintptr_t)ptr;
-	return index - (uintptr_t)vec_view(vec, 0);
+	return index - (uintptr_t)cvec_view(vec, 0);
 }
 
 /** Replaces all occurrences of 'keyword' with 'src'.
  * \param str A pointer to the string to be modified.
  * \param keyword The string to be replaced.
  * \param src The string to replace 'keyword' with. */
-void str_replace(str_t *str, const char *keyword, const char *src) {
+void cstr_replace(cstr_t *str, const char *keyword, const char *src) {
 	if (!str || !keyword || !src) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vec_t *vec = (vec_t*)str;
-	while (str_has(str, keyword)) {
-		vec_replace_range(
+	cvec_t *vec = (cvec_t*)str;
+	while (cstr_has(str, keyword)) {
+		cvec_replace_range(
 			vec,
-			str_find(str, keyword),
+			cstr_find(str, keyword),
 			(void*)src,
 			strlen(src),
 			strlen(keyword),
@@ -300,6 +300,6 @@ void str_replace(str_t *str, const char *keyword, const char *src) {
 
 /** Returns a string containing the latest error information if exists
  * or NULL if it does not. */
-const char *str_get_error() {
+const char *cstr_get_error() {
 	return g_err;
 }
