@@ -40,7 +40,7 @@ CVEC_TYPEDEF(char);
  * \param src A string to initialize with (can be NULL).
  * \return A pointer to the new string. */
 cstr_t *cstr_new(const char *src) {
-	vchar_t *vec = vchar_new();
+	vchar *vec = vchar_new();
 	if (!vec) {
 		g_err = "Failed to create string.";
 		return NULL;
@@ -58,7 +58,7 @@ void cstr_del(cstr_t *str) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	vchar_del(vec);
 }
 
@@ -70,7 +70,7 @@ size_t cstr_len(const cstr_t *str) {
 		g_err = "Invalid argument.";
 		return (size_t)-1;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	return vchar_len(vec) - 1;
 }
 
@@ -82,7 +82,7 @@ const char *cstr_view(const cstr_t *str) {
 		g_err = "Invalid argument.";
 		return NULL;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	return (const char *)vchar_view(vec, 0);
 }
 
@@ -95,7 +95,7 @@ const char *cstr_at(const cstr_t *str, size_t index) {
 		g_err = "Invalid argument.";
 		return NULL;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	if (index >= vchar_len(vec) - 1) {
 		g_err = "Index is out of bounds.";
 		return NULL;
@@ -111,7 +111,7 @@ void cstr_push_back(cstr_t *str, char c) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	vchar_insert(vec, c, vchar_len(vec) - 1);
 }
 
@@ -123,7 +123,7 @@ void cstr_push_front(cstr_t *str, char c) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	vchar_push_front(vec, c);
 }
 
@@ -134,7 +134,7 @@ void cstr_pop_back(cstr_t *str) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	if (vchar_len(vec) <= 1) {
 		g_err = "Cannot pop empty string.";
 		return;
@@ -149,7 +149,7 @@ void cstr_pop_front(cstr_t *str) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	if (vchar_len(vec) <= 1) {
 		g_err = "Cannot pop empty string.";
 		return;
@@ -165,7 +165,7 @@ void cstr_append(cstr_t *str, const char *src) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	vchar_replace_range(
 		vec,
 		vchar_len(vec) - 1,
@@ -182,7 +182,7 @@ void cstr_prepend(cstr_t *str, const char *src) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	vchar_prepend(vec, (void*)src, strlen(src));
 }
 
@@ -194,7 +194,7 @@ void cstr_remove(cstr_t *str, size_t index) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	if (vchar_len(vec) <= 1) {
 		g_err = "Cannot remove from empty string.";
 		return;
@@ -215,7 +215,7 @@ void cstr_insert(cstr_t *str, size_t index, char c) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	if (index >= vchar_len(vec) - 1) {
 		g_err = "Index is out of bounds.";
 		return;
@@ -233,7 +233,7 @@ int cstr_same(const cstr_t *str, const char *src) {
 		g_err = "Invalid argument.";
 		return -1;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	if (!memcmp(vchar_view(vec, 0), src, vchar_len(vec) * sizeof(char))) {
 		return 1;
 	} else {
@@ -251,7 +251,7 @@ int cstr_has(const cstr_t *str, const char *keyword) {
 		g_err = "Invalid argument.";
 		return -1;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	if (strstr(vchar_view(vec, 0), keyword)) {
 		return 1;
 	} else {
@@ -269,7 +269,7 @@ size_t cstr_find(const cstr_t *str, const char *keyword) {
 		g_err = "Invalid argument.";
 		return (size_t)-1;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	void *ptr = strstr(vchar_view(vec, 0), keyword);
 	if (!ptr) return (size_t)-1;
 	uintptr_t index = (uintptr_t)ptr;
@@ -285,7 +285,7 @@ void cstr_replace(cstr_t *str, const char *keyword, const char *src) {
 		g_err = "Invalid argument.";
 		return;
 	}
-	vchar_t *vec = (vchar_t*)str;
+	vchar *vec = (vchar*)str;
 	while (cstr_has(str, keyword)) {
 		vchar_replace_range(
 			vec,
